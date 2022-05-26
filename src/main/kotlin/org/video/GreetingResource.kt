@@ -16,20 +16,6 @@ class GreetingResource(val minioClient: MinioClient) {
 
 
     @GET
-    @Path("video/big.mp4")
-    suspend fun playVideo() =
-        minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket("buck")
-                .`object`("video/big.mp4")
-                .build()
-        ).let { it as InputStream }
-            .let {
-                Response.ok(it).status(206).header("Content-Type", "video/mp4").header("Accept-Ranges", "bytes")
-                    .header("Content-Disposition", "inline; filename=\"QQQQQ.mp4\"").build()
-            }
-
-    @GET
     @Produces(MediaType.TEXT_PLAIN)
     suspend fun hello() = "Hello from RESTEasy Reactive"
 }
