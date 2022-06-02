@@ -33,25 +33,26 @@ class VideoStreamService(val minioClient: MinioClient) {
             2 -> ranges[1].toLong()
             else -> rangeStart + CHUNK_SIZE
         }.coerceAtMost(fileSize - 1)
-        val inputStream = readInputStreamRange(fileKey, rangeStart, rangeEnd)
-        val contentLength = (rangeEnd - rangeStart + 1).toString()
+        val contentLength = (rangeEnd - rangeStart + 1)
+        val inputStream = readInputStreamRange(fileKey, rangeStart, contentLength)
+
         return Response.ok(inputStream).status(206)
             .header(CONTENT_TYPE, VIDEO_CONTENT)
             .header(ACCEPT_RANGES, BYTES)
-            .header(CONTENT_LENGTH, contentLength)
+            .header(CONTENT_LENGTH, contentLength.toString())
             .header(CONTENT_RANGE, "$BYTES $rangeStart-$rangeEnd/$fileSize")
             .build()
 
     }
 
 
-    suspend fun readInputStreamRange(filename: String, start: Long, end: Long) =
+    suspend fun readInputStreamRange(filename: String, start: Long, contentLength: Long) =
 
         minioClient.getObject(
             GetObjectArgs.builder()
                 .bucket("buck")
                 .`object`("video/$filename")
-                .offset(start).length(end)
+                .offset(start).length(contentLength)
                 .build()
         )!!
 
