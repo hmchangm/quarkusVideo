@@ -1,18 +1,25 @@
 package org.video
 
+import io.ktor.utils.io.jvm.javaio.*
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.StatObjectArgs
+import kotlinx.coroutines.future.await
+import software.amazon.awssdk.core.async.AsyncRequestBody
+import software.amazon.awssdk.services.s3.S3AsyncClient
+import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import java.io.File
 import javax.ws.rs.GET
 import javax.ws.rs.HeaderParam
+import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.core.Response
 
 @Path("/video")
-class VideoStreamService(val minioClient: MinioClient) {
+class VideoStreamService(val minioClient: MinioClient, val s3AsyncClient: S3AsyncClient) {
 
     companion object {
-        const val  CONTENT_TYPE = "Content-Type"
+        const val CONTENT_TYPE = "Content-Type"
         const val CONTENT_LENGTH = "Content-Length"
         const val VIDEO_CONTENT = "video/mp4"
         const val CONTENT_RANGE = "Content-Range"
@@ -20,7 +27,6 @@ class VideoStreamService(val minioClient: MinioClient) {
         const val BYTES = "bytes"
         const val CHUNK_SIZE = 4000000L
     }
-
 
     @GET
     @Path("/{fileKey}")
@@ -42,20 +48,31 @@ class VideoStreamService(val minioClient: MinioClient) {
             .header(CONTENT_LENGTH, contentLength.toString())
             .header(CONTENT_RANGE, "$BYTES $rangeStart-$rangeEnd/$fileSize")
             .build()
-
     }
 
+    @POST
+    @Path("/{fileKey}")
+    suspend fun upload(fileKey: String, file: File): String {
+        s3AsyncClient.putObject(
+            PutObjectRequest.builder()
+                .bucket("buck")
+                .key(fileKey)
+                .build(),
+            AsyncRequestBody.fromFile(file)
+        ).await()
+
+        return "OK"
+    }
 
     suspend fun readInputStreamRange(filename: String, start: Long, contentLength: Long) =
 
         minioClient.getObject(
             GetObjectArgs.builder()
                 .bucket("buck")
-                .`object`("video/$filename")
+                .`object`("$filename")
                 .offset(start).length(contentLength)
                 .build()
         )!!
-
 
     suspend fun readLength(filename: String): Long {
         return minioClient.statObject(
