@@ -16,7 +16,6 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.13.1.Final</quarkus.platform.version>
     <quarkus-amazon-services.version>1.2.0</quarkus-amazon-services.version>
-    <ktor.version>1.5.4</ktor.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
   </properties>
   <dependencyManagement>
@@ -80,26 +79,6 @@
       <groupId>io.arrow-kt</groupId>
       <artifactId>arrow-fx-coroutines-jvm</artifactId>
       <version>1.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-core-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-cio-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-auth-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-websockets-jvm</artifactId>
-      <version>${ktor.version}</version>
     </dependency>
     <dependency>
       <groupId>io.arrow-kt</groupId>

@@ -1,11 +1,9 @@
 package org.video
 
-import io.ktor.utils.io.jvm.javaio.*
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.StatObjectArgs
 import kotlinx.coroutines.future.asDeferred
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
