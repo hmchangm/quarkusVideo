@@ -4,6 +4,7 @@ import io.ktor.utils.io.jvm.javaio.*
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.StatObjectArgs
+import kotlinx.coroutines.future.asDeferred
 import kotlinx.coroutines.future.await
 import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.services.s3.S3AsyncClient
@@ -59,13 +60,11 @@ class VideoStreamService(val minioClient: MinioClient, val s3AsyncClient: S3Asyn
                 .key(fileKey)
                 .build(),
             AsyncRequestBody.fromFile(file)
-        ).await()
-
+        ).asDeferred().await()
         return "OK"
     }
 
     suspend fun readInputStreamRange(filename: String, start: Long, contentLength: Long) =
-
         minioClient.getObject(
             GetObjectArgs.builder()
                 .bucket("buck")
